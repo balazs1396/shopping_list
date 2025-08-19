@@ -44,16 +44,32 @@ class _GroceryListState extends State<GroceryList> {
 
       body: ListView.builder(
         itemCount: _groceryItems.length,
-        itemBuilder:
-            (ctx, index) => ListTile(
-              title: Text(_groceryItems[index].name),
+        itemBuilder: (ctx, index) {
+          final currentItem = _groceryItems[index];
+
+          return Dismissible(
+            key: Key(currentItem.id),
+            onDismissed: (direction) {
+              setState(() {
+                _groceryItems.remove(currentItem);
+              });
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('${currentItem.name} dismissed')),
+              );
+            },
+            background: Container(color: Colors.red, child: Text('Removing...'),),
+            child: ListTile(
+              title: Text(currentItem.name),
               leading: Container(
                 width: 24,
                 height: 24,
-                color: _groceryItems[index].category.color,
+                color: currentItem.category.color,
               ),
-              trailing: Text(_groceryItems[index].quantity.toString()),
+              trailing: Text(currentItem.quantity.toString()),
             ),
+          );
+        },
       ),
     );
   }
