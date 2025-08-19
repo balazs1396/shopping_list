@@ -1,0 +1,49 @@
+import 'package:flutter/material.dart';
+import 'package:shopping_list/data/dummy_items.dart';
+import 'package:shopping_list/widgets/new_item.dart';
+
+class GroceryList extends StatefulWidget {
+  const GroceryList({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _GroceryListState();
+  }
+}
+
+class _GroceryListState extends State<GroceryList> {
+  void _onAddItem() {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (ctx) => const NewItem()));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Your grocery'),
+        actions: [
+          IconButton(
+            onPressed: _onAddItem,
+            icon: Icon(Icons.add_circle_outline),
+          ),
+        ],
+      ),
+
+      body: ListView.builder(
+        itemCount: groceryItems.length,
+        itemBuilder:
+            (ctx, index) => ListTile(
+              title: Text(groceryItems[index].name),
+              leading: Container(
+                width: 24,
+                height: 24,
+                color: groceryItems[index].category.color,
+              ),
+              trailing: Text(groceryItems[index].quantity.toString()),
+            ),
+      ),
+    );
+  }
+}
