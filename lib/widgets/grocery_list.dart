@@ -1,9 +1,8 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:shopping_list/data/categories.dart';
-import 'package:shopping_list/data/dummy_items.dart';
-import 'package:shopping_list/models/category.dart';
 import 'package:shopping_list/models/grocery_item.dart';
 import 'package:shopping_list/widgets/new_item.dart';
 import 'package:http/http.dart' as http;
@@ -19,6 +18,7 @@ class GroceryList extends StatefulWidget {
 
 class _GroceryListState extends State<GroceryList> {
   final List<GroceryItem> _groceryItems = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -53,6 +53,8 @@ class _GroceryListState extends State<GroceryList> {
         ),
       );
     }
+
+    _isLoading = false;
     setState(() {});
   }
 
@@ -72,18 +74,12 @@ class _GroceryListState extends State<GroceryList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your grocery'),
-        actions: [
-          IconButton(
-            onPressed: _onAddItem,
-            icon: Icon(Icons.add_circle_outline),
-          ),
-        ],
-      ),
+    Widget content;
 
-      body: ListView.builder(
+    if (_isLoading) {
+      content = const Center(child: CircularProgressIndicator());
+    } else {
+      content = ListView.builder(
         itemCount: _groceryItems.length,
         itemBuilder: (ctx, index) {
           final currentItem = _groceryItems[index];
@@ -114,7 +110,21 @@ class _GroceryListState extends State<GroceryList> {
             ),
           );
         },
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Your grocery'),
+        actions: [
+          IconButton(
+            onPressed: _onAddItem,
+            icon: Icon(Icons.add_circle_outline),
+          ),
+        ],
       ),
+
+      body: content,
     );
   }
 }
